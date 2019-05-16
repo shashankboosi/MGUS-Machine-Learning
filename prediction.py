@@ -1,4 +1,3 @@
-
 """
 
 Code for prediction of deaths using Monoclonal Gammopathy(MGUS)
@@ -17,7 +16,7 @@ SVM is performing better than the remaining algorithms.
 
 # Imports
 import numpy as np
-import pandas as pd 
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
@@ -41,7 +40,7 @@ from sklearn.preprocessing import StandardScaler
 warnings.filterwarnings('ignore')
 
 # Calling the data from using panda and verifying
-main_file=pd.read_csv('./Dataset/train_gammo.csv')
+main_file = pd.read_csv('./Dataset/train_gammo.csv')
 main_file = main_file.drop('id', axis=1)
 # del main_file["ptime"]
 # del main_file["id"]
@@ -50,28 +49,28 @@ print(main_file.describe())
 print(main_file.groupby("death").size())
 print(main_file.groupby("sex").size())
 
-#T he missing values from the haemoglobin column have been replaced
-haemoglobin=main_file["hgb"].mean()
+# The missing values from the haemoglobin column have been replaced
+haemoglobin = main_file["hgb"].mean()
 print(haemoglobin)
 main_file["hgb"] = main_file["hgb"].fillna(haemoglobin)
 age = main_file["age"].mean()
 print(age)
 # The missing values from the creatinine column have been replaced
-creatinine=main_file["creat"].mean()
+creatinine = main_file["creat"].mean()
 print(creatinine)
 main_file["creat"] = main_file["creat"].fillna(creatinine)
 
 # The missing values from the serum spike column have been replaced
-serum_spike=main_file["mspike"].mean()
+serum_spike = main_file["mspike"].mean()
 print(serum_spike)
 main_file["mspike"] = main_file["mspike"].fillna(serum_spike)
 
-#Checking the correlation between two groups
-#print(main_file[['pstat', 'death']].groupby(['pstat'], as_index=False).mean().sort_values(by='death', ascending=False))
+# Checking the correlation between two groups
+# print(main_file[['pstat', 'death']].groupby(['pstat'], as_index=False).mean().sort_values(by='death', ascending=False))
 ## print(main_file[['futime', 'ptime']].groupby(['futime'], as_index=False).mean().sort_values(by='ptime', ascending=False))
-#print(main_file[['pstat', 'ptime']].groupby(['pstat'], as_index=False).mean().sort_values(by='ptime', ascending=False))
-#print(main_file[['death', 'futime']].groupby(['death'], as_index=False).mean().sort_values(by='futime', ascending=False))
-#print(main_file.groupby("mspike").size())
+# print(main_file[['pstat', 'ptime']].groupby(['pstat'], as_index=False).mean().sort_values(by='ptime', ascending=False))
+# print(main_file[['death', 'futime']].groupby(['death'], as_index=False).mean().sort_values(by='futime', ascending=False))
+# print(main_file.groupby("mspike").size())
 
 sns.set(style="ticks")
 sns.pairplot(main_file, hue="death")
@@ -95,7 +94,7 @@ print(main_file[['sex', 'death']].groupby(['sex'], as_index=False).mean().sort_v
 X = main_file.ix[:, 0:8]
 Y = main_file["death"]
 seed = 10
-X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X, Y, test_size=0.2,random_state=seed)
+X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X, Y, test_size=0.2, random_state=seed)
 print(len(X_train))
 print(len(X_test))
 
@@ -124,17 +123,16 @@ for name, model in models:
     results.append(cv_result)
 
 for i in range(len(names)):
-    print(names[i],results[i].mean())
+    print(names[i], results[i].mean())
 
 ax = sns.boxplot(data=results)
 ax.set_xticklabels(names)
 plt.show()
 
-
 # Support Vector Machines
 for kernel in ('linear', 'poly', 'rbf'):
     svm = SVC(kernel=kernel)
-    svm.fit(X_train,Y_train)
+    svm.fit(X_train, Y_train)
     svm_score = round(svm.score(X_train, Y_train) * 100, 2)
     print('SVM Score: \n', svm_score)
 
@@ -148,7 +146,6 @@ for kernel in ('linear', 'poly', 'rbf'):
     print(classification_report(Y_test, predictions_svm))
     con = confusion_matrix(Y_test, predictions_svm)
     print(con)
-
 
 # Linear Discriminant Analysis
 for solver in ('svd', 'lsqr', 'eigen'):
@@ -168,8 +165,6 @@ for solver in ('svd', 'lsqr', 'eigen'):
     conf = confusion_matrix(Y_test, predictions_lda)
     print(conf)
 
-
-
 # Logistic Regression
 lr = LogisticRegression(C=1)
 lr.fit(X_train, Y_train)
@@ -182,13 +177,13 @@ print("Accuracy Score of LR is:")
 print(accuracy_score(Y_test, predictions_lr))
 
 print("Classification Report OF LR is :")
-print(classification_report(Y_test,predictions_lr))
-conf1 = confusion_matrix(Y_test,predictions_lr)
+print(classification_report(Y_test, predictions_lr))
+conf1 = confusion_matrix(Y_test, predictions_lr)
 print(conf1)
 
 # LR on C=0.01
 lr01 = LogisticRegression(C=0.01)
-lr01.fit(X_train,Y_train)
+lr01.fit(X_train, Y_train)
 lr_score = round(lr01.score(X_train, Y_train) * 100, 2)
 print('Logistic Regression on C=0.01: \n', lr_score)
 predictions_lr = lr01.predict(X_test)
@@ -198,7 +193,7 @@ print(accuracy_score(Y_test, predictions_lr))
 
 # LR on C=0.001
 lr001 = LogisticRegression(C=0.001)
-lr001.fit(X_train,Y_train)
+lr001.fit(X_train, Y_train)
 lr_score = round(lr001.score(X_train, Y_train) * 100, 2)
 print('Logistic Regression on C=0.001: \n', lr_score)
 predictions_lr = lr001.predict(X_test)
@@ -208,7 +203,7 @@ print(accuracy_score(Y_test, predictions_lr))
 
 # LR on C=100
 lr100 = LogisticRegression(C=100)
-lr100.fit(X_train,Y_train)
+lr100.fit(X_train, Y_train)
 lr_score = round(lr100.score(X_train, Y_train) * 100, 2)
 print('Logistic Regression on C=100: \n', lr_score)
 predictions_lr = lr100.predict(X_test)
@@ -218,8 +213,8 @@ print(accuracy_score(Y_test, predictions_lr))
 
 # Plot to compare the effect of regularization parameter C with different values
 
-monoclonal_features = [x for i,x in enumerate(X.columns) if i!=8]
-plt.figure(figsize=(8,6))
+monoclonal_features = [x for i, x in enumerate(X.columns) if i != 8]
+plt.figure(figsize=(8, 6))
 plt.plot(lr.coef_.T, 'o', label="C=1")
 plt.plot(lr100.coef_.T, '^', label="C=100")
 plt.plot(lr01.coef_.T, '^', label="C=0.01")
@@ -251,8 +246,8 @@ plt.plot(neighbors_settings, test_accuracy, label="test accuracy")
 plt.ylabel("Accuracy")
 plt.xlabel("n_neighbors")
 plt.legend()
-#plt.savefig('knn_compare_model')
-#plt.show()
+# plt.savefig('knn_compare_model')
+# plt.show()
 
 count = 0
 nob = 50
@@ -260,11 +255,11 @@ for i in range(1, nob):
     knn = KNeighborsClassifier(n_neighbors=i)
     knn.fit(X_train, Y_train)
     knn_score = round(knn.score(X_train, Y_train) * 100, 2)
-    print('KNN Score for number of neighbours {} is {}: \n'.format(i,knn_score))
+    print('KNN Score for number of neighbours {} is {}: \n'.format(i, knn_score))
 
-    #Predict Output
+    # Predict Output
     predicted = knn.predict(X_test)
-    
+
     # Accuracy Score of KNN
     if i > 10:
         a = accuracy_score(Y_test, predicted)
@@ -273,13 +268,13 @@ for i in range(1, nob):
             print(classification_report(Y_test, predicted))
             conf2 = confusion_matrix(Y_test, predicted)
             print(conf2)
-        count = count+a
+        count = count + a
         print('Accuracy Score for KNN with number of neighbours {} is {}: \n'.format(i, a))
     else:
-        print('Accuracy Score for KNN with number of neighbours {} is {}: \n'.format(i, accuracy_score(Y_test, predicted)))
-    
-print('The average accuracy is {}'.format((count/(nob-10))))    
+        print('Accuracy Score for KNN with number of neighbours {} is {}: \n'.format(i,
+                                                                                     accuracy_score(Y_test, predicted)))
 
+print('The average accuracy is {}'.format((count / (nob - 10))))
 
 # Naive Bayes
 nb = GaussianNB()
@@ -293,8 +288,8 @@ print("Accuracy Score  of NB is:")
 print(accuracy_score(Y_test, prediction_nb))
 
 print("Classification Report OF NB is :")
-print(classification_report(Y_test,prediction_nb))
-conf3 = confusion_matrix(Y_test,prediction_nb)
+print(classification_report(Y_test, prediction_nb))
+conf3 = confusion_matrix(Y_test, prediction_nb)
 print(conf3)
 
 # Decision Tree
@@ -309,26 +304,28 @@ print("Accuracy Score on prediction is:")
 print(accuracy_score(Y_test, predictions_dt))
 # Classification Report of DT
 print("Classification Report on DTC :")
-print(classification_report(Y_test,predictions_dt))
-conf4 = confusion_matrix(Y_test,predictions_dt)
+print(classification_report(Y_test, predictions_dt))
+conf4 = confusion_matrix(Y_test, predictions_dt)
 print(conf4)
 
+
 def plot_feature_importances_monoclonal(model):
-    plt.figure(figsize=(8,6))
+    plt.figure(figsize=(8, 6))
     n_features = 8
     plt.barh(range(n_features), model.feature_importances_, align='center')
     plt.yticks(np.arange(n_features), monoclonal_features)
     plt.xlabel("Feature importance")
     plt.ylabel("Feature")
     plt.ylim(-1, n_features)
+
+
 plot_feature_importances_monoclonal(tree)
 plt.savefig('feature_importance')
 
 # Random Forest
-rf = RandomForestClassifier(max_depth=3,n_estimators=100, random_state=0)
+rf = RandomForestClassifier(max_depth=3, n_estimators=100, random_state=0)
 rf.fit(X_train, Y_train)
 print("Accuracy of Random Forest Classifier on training set: {:.3f}".format(rf.score(X_train, Y_train)))
-
 
 predictions_rf = rf.predict(X_test)
 
@@ -337,8 +334,8 @@ print("Accuracy Score on prediction is:")
 print(accuracy_score(Y_test, predictions_rf))
 # Classification Report
 print("Classification Report on RFC :")
-print(classification_report(Y_test,predictions_rf))
-conf5 = confusion_matrix(Y_test,predictions_rf)
+print(classification_report(Y_test, predictions_rf))
+conf5 = confusion_matrix(Y_test, predictions_rf)
 print(conf5)
 
 plot_feature_importances_monoclonal(rf)
